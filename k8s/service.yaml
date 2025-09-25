@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gregoax-website-service
+  namespace: gregoax
+  labels:
+    app: gregoax-website
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: gregoax-website
+    app.kubernetes.io/part-of: gregoax-platform
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: gregoax-website
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: gregoax-website
+    app.kubernetes.io/part-of: gregoax-platform

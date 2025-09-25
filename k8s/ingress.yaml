@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gregoax-website-ingress
+  namespace: gregoax
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: gregoax-website
+    app.kubernetes.io/part-of: gregoax-platform
+  annotations:
+    app.kubernetes.io/managed-by: kubectl
+    app.kubernetes.io/version: 1.0.0
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: gregoax.lo2k.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gregoax-website-service
+            port:
+              number: 80

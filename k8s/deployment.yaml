@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gregoax-website
+  namespace: gregoax
+  labels:
+    app: gregoax-website
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: gregoax-website
+    app.kubernetes.io/part-of: gregoax-platform
+    version: v1
+  annotations:
+    app.kubernetes.io/managed-by: kubectl
+    app.kubernetes.io/version: 1.0.0
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gregoax-website
+      app.kubernetes.io/component: frontend
+      app.kubernetes.io/name: gregoax-website
+      app.kubernetes.io/part-of: gregoax-platform
+  template:
+    metadata:
+      labels:
+        app: gregoax-website
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/name: gregoax-website
+        app.kubernetes.io/part-of: gregoax-platform
+        version: v1
+      annotations:
+        app.kubernetes.io/managed-by: kubectl
+        app.kubernetes.io/version: 1.0.0
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - gregoax-website
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: gregoax-website
+        image: xblaster/gregoax-website:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: NODE_ENV
+          value: production
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
